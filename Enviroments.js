@@ -1,0 +1,1 @@
+export const mongodbHost = "mongodb://localhost:27017/chat"
