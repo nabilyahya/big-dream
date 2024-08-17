@@ -1,8 +1,8 @@
 import React, { useContext, useState } from "react";
 import { CartContext } from "../src/contexts/CartContext";
 
-const ConfirmButton = () => {
-  const { showExtraButton } = useContext(CartContext);
+const ConfirmButton = ({ sliderItems }) => {
+  const { quantities, showExtraButton } = useContext(CartContext);
   const [isAddNotePopupOpen, setIsAddNotePopupOpen] = useState(false);
   const [isConfirmPopupOpen, setIsConfirmPopupOpen] = useState(false);
 
@@ -24,11 +24,20 @@ const ConfirmButton = () => {
 
   const handleAgree = () => {
     setIsConfirmPopupOpen(false);
+    // Handle the confirmation action
   };
 
-  const handleDisagree = () => {
-    setIsConfirmPopupOpen(false);
-  };
+  // Extract selected items and their names
+  const selectedItems = quantities
+    .map((sliderQuantities, sliderIndex) =>
+      sliderQuantities
+        .map((quantity, itemIndex) => ({
+          quantity,
+          itemName: sliderItems[sliderIndex].items[itemIndex].name, // Get the name of the item
+        }))
+        .filter((item) => item.quantity > 0)
+    )
+    .flat();
 
   return (
     <div className="relative">
@@ -73,8 +82,18 @@ const ConfirmButton = () => {
       {isConfirmPopupOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-20">
           <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-[80%] mx-auto">
-            <h2 className="text-lg font-bold mb-4">Confirm Your Action</h2>
-            <p className="mb-4">Are you sure you want to proceed?</p>
+            <h2 className="text-lg font-bold mb-4">Confirm Your Order</h2>
+            <p className="mb-4">You have selected the following items:</p>
+            <ul className="mb-4">
+              {selectedItems.map((item, index) => (
+                <li
+                  key={index}
+                  className="text-sm"
+                >
+                  {item.itemName}: {item.quantity}
+                </li>
+              ))}
+            </ul>
             <div className="flex justify-end space-x-4">
               <button
                 className="bg-red-500 text-white py-2 px-4 rounded-lg"
@@ -84,7 +103,7 @@ const ConfirmButton = () => {
               </button>
               <button
                 className="bg-gray-500 text-white py-2 px-4 rounded-lg"
-                onClick={handleDisagree}
+                onClick={handleCloseConfirmPopup}
               >
                 No, Cancel
               </button>

@@ -1,9 +1,11 @@
-import React, { useContext, useEffect } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { incrementQuantity, decrementQuantity } from "../helper/counterHelpers";
 import { CartContext } from "../src/contexts/CartContext";
+// src/components/ItemsSlider.js
 
-const ItemsSlider = ({ sliderItems }) => {
+const ItemsSlider = ({ sliderItems, searchQuery }) => {
   const { quantities, dispatch } = useContext(CartContext);
+  const [filteredItems, setFilteredItems] = useState(sliderItems);
 
   useEffect(() => {
     if (sliderItems && sliderItems.length > 0) {
@@ -13,10 +15,21 @@ const ItemsSlider = ({ sliderItems }) => {
       });
     }
   }, [sliderItems, dispatch]);
+  useEffect(() => {
+    // Filter items based on the search query
+    const lowercasedQuery = searchQuery.toLowerCase();
+    const filtered = sliderItems.map((slider) => ({
+      ...slider,
+      items: slider.items.filter((item) =>
+        item.name.toLowerCase().includes(lowercasedQuery)
+      ),
+    }));
+    setFilteredItems(filtered);
+  }, [searchQuery, sliderItems]);
 
   return (
     <div>
-      {sliderItems.map((slider, sliderIndex) => (
+      {filteredItems.map((slider, sliderIndex) => (
         <div
           key={sliderIndex}
           className="mb-4"
@@ -36,12 +49,19 @@ const ItemsSlider = ({ sliderItems }) => {
                   />
                   <div className="text-center mt-2">
                     <p className="text-sm font-bold">{item.name}</p>
-                    <p className="text-sm text-gray-500">{item.price}</p>
+                    <p className="text-sm text-gray-500">
+                      ${item.price.toFixed(2)}
+                    </p>
                     <div className="mt-2 flex items-center">
                       <button
                         className="bg-red-500 text-white px-2 py-1 rounded"
                         onClick={() =>
-                          decrementQuantity(dispatch, sliderIndex, itemIndex)
+                          decrementQuantity(
+                            dispatch,
+                            sliderIndex,
+                            itemIndex,
+                            item.price
+                          )
                         }
                       >
                         -
@@ -52,7 +72,12 @@ const ItemsSlider = ({ sliderItems }) => {
                       <button
                         className="bg-red-500 text-white px-2 py-1 rounded"
                         onClick={() =>
-                          incrementQuantity(dispatch, sliderIndex, itemIndex)
+                          incrementQuantity(
+                            dispatch,
+                            sliderIndex,
+                            itemIndex,
+                            item.price
+                          )
                         }
                       >
                         +

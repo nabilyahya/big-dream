@@ -6,22 +6,24 @@ import React, { createContext, useReducer } from "react";
 const initialState = {
   quantities: [], // Stores quantities for each slider and item
   showExtraButton: false, // Controls visibility of the extra button
+  totalPrice: 0, // Initialize total price
 };
 
+// Reducer function to manage state changes
 // Reducer function to manage state changes
 const CartReducer = (state, action) => {
   switch (action.type) {
     case "INITIALIZE_QUANTITIES":
-      // Initialize quantities with the given payload
       return {
         ...state,
         quantities: action.payload,
         showExtraButton: action.payload.some((sliderQuantities) =>
           sliderQuantities.some((quantity) => quantity > 0)
         ),
+        totalPrice: 0, // Reset total price when initializing
       };
+
     case "INCREMENT": {
-      // Increment the quantity of a specific item
       const updatedQuantitiesInc = state.quantities.map(
         (sliderQuantities, sIndex) =>
           sliderQuantities.map((quantity, iIndex) =>
@@ -30,16 +32,23 @@ const CartReducer = (state, action) => {
               : quantity
           )
       );
+
+      const updatedTotalPrice = state.totalPrice + (action.itemPrice || 0); // Add the price of the incremented item
+
       return {
         ...state,
         quantities: updatedQuantitiesInc,
         showExtraButton: updatedQuantitiesInc.some((sliderQuantities) =>
           sliderQuantities.some((quantity) => quantity > 0)
         ),
+        totalPrice: parseFloat(updatedTotalPrice.toFixed(2)), // Ensure total price is a valid number
       };
     }
+
     case "DECREMENT": {
-      // Decrement the quantity of a specific item
+      const currentQuantity =
+        state.quantities[action.sliderIndex][action.itemIndex];
+
       const updatedQuantitiesDec = state.quantities.map(
         (sliderQuantities, sIndex) =>
           sliderQuantities.map((quantity, iIndex) =>
@@ -50,14 +59,22 @@ const CartReducer = (state, action) => {
               : quantity
           )
       );
+
+      const updatedTotalPrice =
+        currentQuantity > 0
+          ? state.totalPrice - (action.itemPrice || 0)
+          : state.totalPrice;
+
       return {
         ...state,
         quantities: updatedQuantitiesDec,
         showExtraButton: updatedQuantitiesDec.some((sliderQuantities) =>
           sliderQuantities.some((quantity) => quantity > 0)
         ),
+        totalPrice: parseFloat(Math.max(updatedTotalPrice, 0).toFixed(2)), // Ensure total price is a valid number and non-negative
       };
     }
+
     default:
       return state;
   }

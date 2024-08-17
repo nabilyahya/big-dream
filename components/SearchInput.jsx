@@ -1,9 +1,13 @@
+import React from "react";
 import { FaSearch } from "react-icons/fa";
-const SearchInput = () => {
+
+const SearchInput = ({ value, onChange }) => {
   return (
     <div className="relative flex flex-1 items-center">
       <input
         type="text"
+        value={value}
+        onChange={onChange}
         className="flex-1 p-2 pl-10 border rounded-md focus:outline-none"
         placeholder="Search..."
       />
