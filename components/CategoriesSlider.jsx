@@ -1,6 +1,6 @@
 const CategoriesSlider = () => {
   return (
-    <div className="overflow-x-auto mt-4 scrollbar-hide">
+    <div className="overflow-x-auto mt-4 pt-4 pb-4 scrollbar-hide">
       <div className="flex space-x-4 px-4">
         {["Category 1", "Category 2", "Category 3", "Category 4"].map(
           (category, index) => (
