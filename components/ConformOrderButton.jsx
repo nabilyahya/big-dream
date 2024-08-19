@@ -2,7 +2,8 @@ import React, { useContext, useState } from "react";
 import { CartContext } from "../src/contexts/CartContext";
 
 const ConfirmButton = ({ sliderItems }) => {
-  const { quantities, showExtraButton } = useContext(CartContext);
+  const { quantities, showExtraButton, dispatch, resetCounter } =
+    useContext(CartContext);
   const [isAddNotePopupOpen, setIsAddNotePopupOpen] = useState(false);
   const [isConfirmPopupOpen, setIsConfirmPopupOpen] = useState(false);
 
@@ -24,6 +25,8 @@ const ConfirmButton = ({ sliderItems }) => {
 
   const handleAgree = () => {
     setIsConfirmPopupOpen(false);
+    dispatch({ type: "SHOW_NEW_BUTTON" });
+    resetCounter();
     // Handle the confirmation action
   };
 

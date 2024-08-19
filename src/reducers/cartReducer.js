@@ -21,6 +21,18 @@ export const cartReducer = (state, action) => {
             )
           : slider
       );
+    case "SHOW_NEW_BUTTON":
+      return {
+        ...state,
+        showNewButton: true,
+      };
+
+    case "HIDE_NEW_BUTTON":
+      return {
+        ...state,
+        showNewButton: false,
+      };
+
     default:
       return state;
   }
